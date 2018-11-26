@@ -1,37 +1,50 @@
 <html>
-Game
+Instant Pho
 <canvas id = "gameCanvas" width = "800" 
 height = "600"></canvas>
 <header>
-ShamelessPlug.exe
+ShamelessPlug_SoBoredAottg.exe
 </header>
 
 
 
 <script>
+//Miryn
 var canvas;
 var canvasContext;
+var Fps = 144;
 var ballX = 50;
 var ballY = 50;
-var Fps = 144;
 var ballSpeedX = 5;
 var ballSpeedY = 1;
 var speedMultiplier = 1.5;
-var sBx = -100;
-var sBy = -100;
+var randoms;
+var saver = 0;
+
 var isSpeedblock = false;
 var blockX = 0;
 var blockY = 0;
+var sBx = -100;
+var sBy = -100;
+
+var isStopblock = false;
+var stopX = 0;
+var stopY = 0;
+var pBx = -100;
+var pBy = -100;
+var result = 1;
+var isHit = false;
+var color = 'orange'
 
 var paddleY = 0;
 const PADDLE_HEIGHT = 100;
 const Thicc = 10;
 var paddle2Y = 250;
+
 var player1Score = 0;
 var player2Score = 0;
 const WINNING_SCORE = 7;
 var WhoWin = 0;
-
 var WinPause = false;
 
 function calculateMousePos(evt) {
@@ -108,6 +121,21 @@ function genSpeedBox() {
 	isSpeedblock = true;
 }
 
+function genShotBox() {
+	result = Math.floor(Math.random() * 2);
+	if (result == 0) { result = -1; }
+	else { result = 1; }
+ 	stopX = 20;
+	stopY = 90;
+	//sBy = Math.random() * (100 - (canvas.height-100));
+	pBy = Math.floor(Math.random() * ((canvas.height - 100) - 100 + 1)) + 100;
+	console.log("shotBox" + pBy);	
+	pBx = 400-stopX
+	//ONLY CREATE if false, then is true on creation
+	isSpeedblock = true;
+	
+}
+
 function moveAll() {
 	if(WinPause) {
 		ballSpeedX = 5;
@@ -130,7 +158,10 @@ function moveAll() {
 			var deltaY = ballY
 				-(paddle2Y+PADDLE_HEIGHT/2);
 			ballSpeedY = deltaY * 0.1;
-	if (isSpeedblock == false) { genSpeedBox(); }
+			randoms = Math.floor(Math.random() * 2);
+			console.log(randoms);
+	if (isSpeedblock == false && randoms == 0) { genSpeedBox(); }
+	if (isSpeedblock == false && randoms == 1) { genShotBox(); }
 
 		
 		}
@@ -145,7 +176,10 @@ function moveAll() {
 			var deltaY = ballY
 				-(paddleY+PADDLE_HEIGHT/2);
 			ballSpeedY = deltaY * 0.1;
-		if (isSpeedblock == false) { genSpeedBox(); }	
+			randoms = Math.floor(Math.random() * 2);
+			console.log(randoms);
+	if (isSpeedblock == false && randoms == 0) { genSpeedBox(); }
+	if (isSpeedblock == false && randoms == 1) { genShotBox(); }	
 		
 		}
 		else{
@@ -175,6 +209,22 @@ function moveAll() {
 		ballSpeedX = ballSpeedX * speedMultiplier;
 		
 	}
+	//collider for shotblock
+	if ((ballY <= (pBy + stopY)&&ballY >= pBy ) && (ballX <= (pBx + stopX)&&ballX >= pBx )) 
+	{
+		if (isHit == true) { isHit = false; ballSpeedY = 0; ballSpeedX = saver * result; stopX = 0; stopY = 0; color = 'orange';}
+		else {
+			isHit = true
+			isSpeedblock = false;
+			stopX = 50;
+			stopY = 20;
+			ballSpeedY = 10;
+			saver = ballSpeedX;
+			ballSpeedX = 0;
+			color = 'blue'
+		     }
+		
+	}
 }
 
 function drawNet() {
@@ -199,6 +249,8 @@ function drawAll()
 	colorRect(0,0,canvas.width,canvas.height,'black');
 	//draws speed block
 	colorRect(sBx,sBy,blockX,blockY,'green');
+	//draws shot box
+	colorRect(pBx,pBy,stopX,stopY, color);
 	//draws paddle
 	colorRect(0,paddleY,10,PADDLE_HEIGHT,'white');
 	//draws ball
