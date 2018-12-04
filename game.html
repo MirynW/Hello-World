@@ -3,7 +3,7 @@ Instant Pho
 <canvas id = "gameCanvas" width = "800" 
 height = "600"></canvas>
 <header>
-ShamelessPlug_SoBoredAottg.exe
+ShamelessPlug_SoBored.exe
 </header>
 
 
@@ -12,7 +12,7 @@ ShamelessPlug_SoBoredAottg.exe
 //Miryn
 var canvas;
 var canvasContext;
-var Fps = 144;
+var Fps = 60;
 var ballX = 50;
 var ballY = 50;
 var ballSpeedX = 5;
@@ -20,6 +20,7 @@ var ballSpeedY = 1;
 var speedMultiplier = 1.5;
 var randoms;
 var saver = 0;
+
 
 var isSpeedblock = false;
 var blockX = 0;
@@ -35,6 +36,7 @@ var pBy = -100;
 var result = 1;
 var isHit = false;
 var color = 'orange'
+var yRand = 0;
 
 var paddleY = 0;
 const PADDLE_HEIGHT = 100;
@@ -122,6 +124,10 @@ function genSpeedBox() {
 }
 
 function genShotBox() {
+	//This will generate a number 0-9
+	yRand = Math.floor(Math.random() * 10);
+	if (yRand >= 1 && yRand <=5) { yRand = yRand * -1; }
+	if (yRand >=6 && yRand <=9) { yRand = yRand - 5; }
 	result = Math.floor(Math.random() * 2);
 	if (result == 0) { result = -1; }
 	else { result = 1; }
@@ -198,7 +204,7 @@ function moveAll() {
 	{
 		ballSpeedY = -ballSpeedY;
 	}
-	//collider for speedBall NEEDS WORK!!
+	//collider for speedBall
 	//We check if the ball is less than the top y value and greater than the bottom y value. I guess this means we draw from the bottom left corner.
 	if ((ballY <= (sBy + blockY)&&ballY >= sBy ) && (ballX <= (sBx + blockX)&&ballX >= sBx )) 
 	{
@@ -209,10 +215,10 @@ function moveAll() {
 		ballSpeedX = ballSpeedX * speedMultiplier;
 		
 	}
-	//collider for shotblock
+	//collider for shotblock - sends the ball downward to bouce and rehit the collider and then shoot it in a random direction.
 	if ((ballY <= (pBy + stopY)&&ballY >= pBy ) && (ballX <= (pBx + stopX)&&ballX >= pBx )) 
 	{
-		if (isHit == true) { isHit = false; ballSpeedY = 0; ballSpeedX = saver * result; stopX = 0; stopY = 0; color = 'orange';}
+		if (isHit == true) { isHit = false; ballSpeedY = yRand; ballSpeedX = saver * result; stopX = 0; stopY = 0; color = 'orange'; console.log("yRand is" + yRand);}
 		else {
 			isHit = true
 			isSpeedblock = false;
