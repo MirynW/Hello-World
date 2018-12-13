@@ -3,7 +3,7 @@ Instant Pho
 <canvas id = "gameCanvas" width = "800" 
 height = "600"></canvas>
 <header>
-ShamelessPlug_SoBored.exe
+ShamelessPlug_goatsMontage_North.exe
 </header>
 
 
@@ -48,6 +48,19 @@ var player2Score = 0;
 const WINNING_SCORE = 7;
 var WhoWin = 0;
 var WinPause = false;
+    
+var isMoveblock = false;
+var movX1 = 0;
+var movY1 = 0;
+var mBx1 = -100;
+var mBy1 = -100;
+var movX2 = 0;
+var movY2 = 0;
+var mBx2 = -100;
+var mBy2 = -100;
+var color1 = 'orange';
+var color2 = 'blue';
+    
 
 function calculateMousePos(evt) {
 	var rect = canvas.getBoundingClientRect();
@@ -142,6 +155,36 @@ function genShotBox() {
 	
 }
 
+function genMoveBox() {
+    //Generate boxes at the top and bottom of the screen that moves the ball to the opposite box when hit
+/*
+var movX1 = 0;
+var movY1 = 0;
+var mBx1 = -100;
+var mBy1 = -100;
+var movX2 = 0;
+var movY2 = 0;
+var mBx2 = -100;
+var mBy2 = -100;
+var color1 = 'orange';
+var color2 = 'blue';
+    colorRect(mBx1,mBy1,movX1,movY1, color1);
+    //draws move block out
+    colorRect(mBx2,mBy2,movX2,movY2, color2);
+*/
+//On creation, set sizes and range
+mBx1 = Math.floor(Math.random() *canvas.width);
+mBy1 = (canvas.height-20);
+movX1 = 100;
+movY1 = 20;
+mBx2 = Math.floor(Math.random() *canvas.width);
+mBy2 = 0;
+movX2 = 100;
+movY2 = 20;
+console.log(movX1,movX2,mBx1,mBx2,movY1,movY2,mBx2,mBy2);
+isSpeedblock = true;
+}
+
 function moveAll() {
 	if(WinPause) {
 		ballSpeedX = 5;
@@ -152,7 +195,7 @@ function moveAll() {
 
 	computerMovement();
 
-		
+    //genMoveBox();
 
 	ballX += ballSpeedX;
 	ballY += ballSpeedY;
@@ -164,10 +207,11 @@ function moveAll() {
 			var deltaY = ballY
 				-(paddle2Y+PADDLE_HEIGHT/2);
 			ballSpeedY = deltaY * 0.1;
-			randoms = Math.floor(Math.random() * 2);
+			randoms = Math.floor(Math.random() * 3);
 			console.log(randoms);
 	if (isSpeedblock == false && randoms == 0) { genSpeedBox(); }
-	if (isSpeedblock == false && randoms == 1) { genShotBox(); }
+	if (isSpeedblock == false && randoms == 1) { genShotBox();  }
+    if (isSpeedblock == false && randoms == 2) { genMoveBox();  }
 
 		
 		}
@@ -186,6 +230,7 @@ function moveAll() {
 			console.log(randoms);
 	if (isSpeedblock == false && randoms == 0) { genSpeedBox(); }
 	if (isSpeedblock == false && randoms == 1) { genShotBox(); }	
+    if (isSpeedblock == false && randoms == 2) { genMoveBox();  }
 		
 		}
 		else{
@@ -231,6 +276,16 @@ function moveAll() {
 		     }
 		
 	}
+    //Collider for moveblock - send the ball to the opposite block.
+    if((ballY <= (mBy1 + movY1)&&ballY >= mBy1) &&(ballX <= (mBx1 + movX1) && ballX >= mBx1)) {
+       ballY = (mBy2);
+       ballX = (mBx2);
+       }
+    //Collider for moveblock - send the ball to the opposite block.
+    if((ballY <= (mBy2 + movY2)&&ballY >= mBy2) &&(ballX <= (mBx2 + movX2) && ballX >= mBx2)) {
+        ballY = (mBy1 + 10);
+        ballX = (mBx1);
+       }
 }
 
 function drawNet() {
@@ -257,6 +312,10 @@ function drawAll()
 	colorRect(sBx,sBy,blockX,blockY,'green');
 	//draws shot box
 	colorRect(pBx,pBy,stopX,stopY, color);
+    //draws move block in
+    colorRect(mBx1,mBy1,movX1,movY1, color1);
+    //draws move block out
+    colorRect(mBx2,mBy2,movX2,movY2, color2);
 	//draws paddle
 	colorRect(0,paddleY,10,PADDLE_HEIGHT,'white');
 	//draws ball
